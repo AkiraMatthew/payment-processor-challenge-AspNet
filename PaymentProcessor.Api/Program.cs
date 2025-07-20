@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
+//var isLoggingEnabled = builder.Configuration.GetValue<bool>("LoggingEnabled", false);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
