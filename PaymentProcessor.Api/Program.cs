@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
     });*/
-    options.SwaggerDoc(apiVersion, new OpenApiInfo
+  //  options.SwaggerDoc(apiVersion, new OpenApiInfo
     {
         Title = "Payment Processor",
         Version = apiVersion,
