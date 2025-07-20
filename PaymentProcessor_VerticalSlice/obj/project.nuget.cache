@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KoFDkiTN+4Q=",
+  "dgSpecHash": "i0fjaB1Zsws=",
   "success": true,
-  "projectFilePath": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor_VerticalSlice.csproj",
+  "projectFilePath": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\akira\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.22.1\\microsoft.visualstudio.azure.containers.tools.targets.1.22.1.nupkg.sha512"
   ],

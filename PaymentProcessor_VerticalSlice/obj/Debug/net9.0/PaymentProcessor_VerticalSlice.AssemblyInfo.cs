@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PaymentProcessor_VerticalSlice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+460d1bea04411159e72456f62cfb6317cf75cdb6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6ec14b2932cdebfae12a2d614a14cf271c713e8")]
 [assembly: System.Reflection.AssemblyProductAttribute("PaymentProcessor_VerticalSlice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PaymentProcessor_VerticalSlice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

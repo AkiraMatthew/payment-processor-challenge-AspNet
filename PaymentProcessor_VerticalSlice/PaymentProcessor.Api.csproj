@@ -12,4 +12,13 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\DTOs\" />
+    <Folder Include="Domain\Entities\" />
+    <Folder Include="Features\" />
+    <Folder Include="Infrastructure\Config\" />
+    <Folder Include="Infrastructure\Contexts\" />
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
 </Project>

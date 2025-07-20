@@ -105,9 +105,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor_VerticalSlice.csproj",
-      "projectName": "PaymentProcessor_VerticalSlice",
-      "projectPath": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor_VerticalSlice.csproj",
+      "projectUniqueName": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor.Api.csproj",
+      "projectName": "PaymentProcessor.Api",
+      "projectPath": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\PaymentProcessor.Api.csproj",
       "packagesPath": "C:\\Users\\akira\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\akira\\source\\repos\\playground\\payment-processor-challenge-AspNet\\PaymentProcessor_VerticalSlice\\obj\\",
       "projectStyle": "PackageReference",

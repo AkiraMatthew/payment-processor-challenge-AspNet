@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6 d17.14
+VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor_VerticalSlice", "PaymentProcessor_VerticalSlice\PaymentProcessor_VerticalSlice.csproj", "{2E993836-12B0-4674-9EE4-C91E2AF96023}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor.Api", "PaymentProcessor_VerticalSlice\PaymentProcessor.Api.csproj", "{2E993836-12B0-4674-9EE4-C91E2AF96023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor.Tests", "PaymentProcessor.Tests\PaymentProcessor.Tests.csproj", "{321AC1E8-4543-4762-8544-5DC25A2EFF01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2E993836-12B0-4674-9EE4-C91E2AF96023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E993836-12B0-4674-9EE4-C91E2AF96023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E993836-12B0-4674-9EE4-C91E2AF96023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{321AC1E8-4543-4762-8544-5DC25A2EFF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{321AC1E8-4543-4762-8544-5DC25A2EFF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{321AC1E8-4543-4762-8544-5DC25A2EFF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{321AC1E8-4543-4762-8544-5DC25A2EFF01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

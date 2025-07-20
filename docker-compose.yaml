@@ -1,0 +1,27 @@
+services:
+  nginx:
+    image: nginx
+    ports: ["3001:80"]
+    deploy:
+      resources:
+        limits: { cpus: "0.1", memory: "20MB" }
+
+  payment-api:
+    image: PaymentProcessor.Api
+    deploy:
+      replicas: 2
+      resources:
+        limits: { cpus: "0.7", memory: "150MB" }
+    depends_on: [redis, postgres]
+
+  redis:
+    image: redis
+    deploy:
+      resources:
+        limits: { cpus: "0.1", memory: "30MB" }
+
+  postgres:
+    image: postgres
+    deploy:
+      resources:
+        limits: { cpus: "0.1", memory: "20MB" }
