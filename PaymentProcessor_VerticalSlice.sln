@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor.Api", "PaymentProcessor_VerticalSlice\PaymentProcessor.Api.csproj", "{2E993836-12B0-4674-9EE4-C91E2AF96023}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor.Api", "PaymentProcessor.Api\PaymentProcessor.Api.csproj", "{2E993836-12B0-4674-9EE4-C91E2AF96023}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentProcessor.Tests", "PaymentProcessor.Tests\PaymentProcessor.Tests.csproj", "{321AC1E8-4543-4762-8544-5DC25A2EFF01}"
 EndProject
