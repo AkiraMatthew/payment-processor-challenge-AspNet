@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
+
 var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
 //var isLoggingEnabled = builder.Configuration.GetValue<bool>("LoggingEnabled", false);
 

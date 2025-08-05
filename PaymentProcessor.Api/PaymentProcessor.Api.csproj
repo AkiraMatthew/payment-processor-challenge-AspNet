@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>4b91e39e-43c5-4710-9ddc-1e4ba29558f9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +23,9 @@
     <Folder Include="Domain\DTOs\" />
     <Folder Include="Domain\Entities\" />
     <Folder Include="Features\PaymentProcessor\" />
-    <Folder Include="Infrastructure\Config\" />
     <Folder Include="Infrastructure\Contexts\" />
     <Folder Include="Infrastructure\MessageBroker\" />
     <Folder Include="Infrastructure\Redis\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
