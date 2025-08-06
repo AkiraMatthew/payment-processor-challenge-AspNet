@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using PaymentProcessor.Api.Infrastructure.Database;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -8,6 +9,8 @@ var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<DatabaseHealthCheck>();
 
 #region Swagger Documentation
 builder.Services.AddSwaggerGen(options =>
@@ -39,6 +42,12 @@ builder.Services.AddSwaggerGen(options =>
 #endregion
 
 var app = builder.Build();
+
+var healthCheck = app.Services.GetRequiredService<DatabaseHealthCheck>();
+if (!await healthCheck.IsDatabaseReady())
+{
+    throw new Exception("PostgreSQL connection failed!");
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();
