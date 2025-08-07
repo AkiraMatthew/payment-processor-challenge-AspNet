@@ -45,11 +45,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+#region Database HealthCheck
 var healthCheck = app.Services.GetRequiredService<DatabaseHealthCheck>();
 if (!await healthCheck.IsDatabaseReady())
 {
     throw new Exception("PostgreSQL connection failed!");
 }
+#endregion
 
 app.UseSwagger();
 app.UseSwaggerUI();
