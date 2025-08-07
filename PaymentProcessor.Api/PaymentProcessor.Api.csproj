@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,12 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>4b91e39e-43c5-4710-9ddc-1e4ba29558f9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.3" />
@@ -21,10 +23,10 @@
   <ItemGroup>
     <Folder Include="Domain\DTOs\" />
     <Folder Include="Domain\Entities\" />
-    <Folder Include="Features\" />
-    <Folder Include="Infrastructure\Config\" />
+    <Folder Include="Features\PaymentProcessor\" />
     <Folder Include="Infrastructure\Contexts\" />
-    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\MessageBroker\" />
+    <Folder Include="Infrastructure\Redis\" />
   </ItemGroup>
 
 </Project>

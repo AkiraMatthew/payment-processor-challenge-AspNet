@@ -1,12 +1,18 @@
 using Microsoft.OpenApi.Models;
+using PaymentProcessor.Api.Infrastructure.Database;
+using StackExchange.Redis;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
+
 var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
-//var isLoggingEnabled = builder.Configuration.GetValue<bool>("LoggingEnabled", false);
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<DatabaseHealthCheck>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+
+builder.Services.AddHttpClient();
 
 #region Swagger Documentation
 builder.Services.AddSwaggerGen(options =>
@@ -38,6 +44,14 @@ builder.Services.AddSwaggerGen(options =>
 #endregion
 
 var app = builder.Build();
+
+#region Database HealthCheck
+var healthCheck = app.Services.GetRequiredService<DatabaseHealthCheck>();
+if (!await healthCheck.IsDatabaseReady())
+{
+    throw new Exception("PostgreSQL connection failed!");
+}
+#endregion
 
 app.UseSwagger();
 app.UseSwaggerUI();
