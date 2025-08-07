@@ -1,6 +1,6 @@
 ﻿namespace PaymentProcessor.Api.Domain.DTOs.GET;
 
-public record PaymentSummaryResponse(
+public record PaymentPurgeResponse(
     PaymentSummaryDTO ProcessorDefault,
     PaymentSummaryDTO ProcessorFallback
 );
