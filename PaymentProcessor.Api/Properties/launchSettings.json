@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "http": {
+    "Dev - http": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
@@ -9,7 +9,7 @@
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5106"
     },
-    "https": {
+    "Dev - https": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

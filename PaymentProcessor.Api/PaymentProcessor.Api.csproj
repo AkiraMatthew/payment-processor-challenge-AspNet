@@ -22,9 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\DTOs\" />
-    <Folder Include="Domain\Entities\" />
-    <Folder Include="Domain\Interfaces\" />
     <Folder Include="Features\PaymentProcessor\" />
     <Folder Include="Infrastructure\Contexts\" />
     <Folder Include="Infrastructure\MessageBroker\" />
