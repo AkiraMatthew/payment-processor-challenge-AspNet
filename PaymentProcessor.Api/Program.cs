@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using PaymentProcessor.Api.Infrastructure.Database;
+using PaymentProcessor.Api.Infrastructure.Redis;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -10,7 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
+//builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
 builder.Services.AddHttpClient();
 
