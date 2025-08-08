@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
@@ -22,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Domain\Interfaces\" />
     <Folder Include="Features\PaymentProcessor\" />
     <Folder Include="Infrastructure\Contexts\" />
     <Folder Include="Infrastructure\MessageBroker\" />
-    <Folder Include="Infrastructure\Redis\" />
   </ItemGroup>
 
 </Project>
