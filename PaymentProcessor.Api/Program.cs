@@ -1,36 +1,41 @@
 using Microsoft.OpenApi.Models;
 using PaymentProcessor.Api.Infrastructure.Database;
+using PaymentProcessor.Api.Infrastructure.Enum;
 using PaymentProcessor.Api.Infrastructure.Redis;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
 var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHttpContextAccessor();
+var postgresConnectionString = builder.Configuration.GetConnectionString("Postgres")
+    ?? throw new InvalidOperationException("Database connection string is not configured.");
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
-builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
-//builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost"));
 
-builder.Services.AddHttpClient();
+builder.Services.AddStackExchangeRedisCache(opts =>
+{
+    opts.Configuration = builder.Configuration.GetConnectionString("Redis");
+    opts.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
+    {
+        AbortOnConnectFail = true,
+        EndPoints = { opts.Configuration! }
+    };
+});
 
-#region Swagger Documentation
+builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
+{
+    httpClient.BaseAddress = new Uri(builder.Configuration["PaymentProcessor_Default"]!);
+});
+
+builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
+{
+    httpClient.BaseAddress = new Uri(builder.Configuration["PaymentProcessor_Fallback"]!);
+});
+
+builder.Services.AddNpgsqlDataSource(postgresConnectionString);
+
 builder.Services.AddSwaggerGen(options =>
 {
-    /*options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description =
-                    "This is a system built for encrypt/decrypt passwords and files, generate passwords, store passwords/sensitive data\r\n\r\n" +
-                    "Type 'Bearer' + your token in the input below, ex.: 'Bearer XYZ'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-    });*/
     options.SwaggerDoc(apiVersion, new OpenApiInfo
     {
         Title = "Payment Processor",
@@ -44,7 +49,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-#endregion
 
 var app = builder.Build();
 
@@ -60,7 +64,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", "ADS.PassAuthKeeper");
+    options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", "PaymentProcessor");
     options.DocumentTitle = "PassAuthKeeper API Documentation";
     options.RoutePrefix = string.Empty;
 });
@@ -68,14 +72,4 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseRouting();
 
-//app.UseAuthorization();
-
-app.MapStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-
-app.Run();
+await app.RunAsync();
