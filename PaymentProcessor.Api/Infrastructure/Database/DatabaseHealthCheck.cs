@@ -2,14 +2,9 @@
 
 namespace PaymentProcessor.Api.Infrastructure.Database;
 
-public class DatabaseHealthCheck
+public class DatabaseHealthCheck(IConfiguration config)
 {
-    private readonly string _connectionString;
-
-    public DatabaseHealthCheck(IConfiguration config)
-    {
-        _connectionString = config.GetConnectionString("Postgres")!;
-    }
+    private readonly string _connectionString = config.GetConnectionString("Postgres")!;
 
     public async Task<bool> IsDatabaseReady()
     {
