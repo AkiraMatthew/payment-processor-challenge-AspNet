@@ -12,74 +12,7 @@ This API uses the Vertical Slice architecture to improve focus, scalability, and
 
 ## Structure
 
-### Project Root
-```
-PaymentProcessor-Challenge/
-├── PaymentProcessor_VerticalSlice.sln
-├── docker-compose.yaml
-├── README.md
-├── LICENSE
-├── .dockerignore
-├── .gitignore
-└── assets/
-    └── payment-processor-design.png
-```
-
-### PaymentProcessor.Api/
-```
-PaymentProcessor.Api/
-├── Program.cs                          # Main entry point
-├── Dockerfile                          # Docker configuration
-├── docker-compose.yml                  # Local development setup
-├── appsettings.json                    # Configuration
-├── appsettings.Development.json        # Development settings
-├── PaymentProcessor.Api.csproj         # Project file (.NET 9.0 + AOT)
-├── Properties/
-│   └── launchSettings.json            # Launch profiles
-├── Domain/
-│   ├── DTOs/
-│   │   ├── GET/
-│   │   │   ├── PaymentPurgeResponse.cs
-│   │   │   └── PaymentSummaryResponse.cs
-│   │   ├── POST/
-│   │   │   ├── PaymentProcessorRequest.cs
-│   │   │   └── PaymentRequest.cs
-│   │   ├── PaymentProcessorDTO.cs
-│   │   └── PaymentSummaryDTO.cs
-│   ├── Entities/
-│   │   └── Payments.cs
-│   └── Interfaces/
-├── Features/
-│   └── PaymentProcessor/
-├── Infrastructure/
-│   ├── Config/
-│   │   └── DbConnectionFactory.cs
-│   ├── Contexts/
-│   ├── Database/
-│   │   ├── DatabaseHealthCheck.cs
-│   │   └── Scripts/
-│   │       └── 080520250142_Payments.sql
-│   ├── Enum/
-│   │   └── PaymentGateway.cs
-│   ├── MessageBroker/
-│   └── Redis/
-│       ├── IRedisCacheService.cs
-│       └── RedisCacheService.cs
-```
-
-### PaymentProcessor.Tests/
-```
-PaymentProcessor.Tests/
-├── PaymentProcessor.Tests.csproj
-└── UnitTest1.cs
-```
-
-### .github/
-```
-.github/
-└── workflows/
-    └── build.yml
-```
+![Payment Processor System design](./assets/mermaid-paymentProcessor.svg)
 
 # System Design
 A schema about how the system works. The resources limitations are in the docker-compose.yaml file.
