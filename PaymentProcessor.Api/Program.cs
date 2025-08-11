@@ -34,6 +34,8 @@ builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
 
 builder.Services.AddNpgsqlDataSource(postgresConnectionString);
 
+ThreadPool.SetMinThreads(32, 32);
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc(apiVersion, new OpenApiInfo
