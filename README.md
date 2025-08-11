@@ -13,10 +13,10 @@ This project is about a backend challenge, available in this repository: https:/
 # About
 
 This repository implements a Payment Processor with limited resources, handling a large number of requests even with limited infrastructure, focusing on creating a resilient + performatic backend.
-<br> <br>
-This project uses the .NET AOT (Ahead Of Time) compilation, which is a technique used to compile code before runtime, resulting in 30% of performance improvement of the application runtime.
 
-<br><br>
+## Project Details
+
+This project uses the .NET AOT (Ahead Of Time) compilation, which is a technique used to compile code before runtime, resulting in 30% of performance improvement of the application runtime.
 
 This project also uses ADO.NET , which is a set of classes that provide a way to interact with a database, avoiding the need to use ORMs to interact with the database, resulting in a better performance.
 
@@ -29,7 +29,7 @@ This API uses the Vertical Slice architecture to improve focus, scalability, and
 
 # System Design
 A schema about how the system works. The resources limitations are in the docker-compose.yaml file.
-<br><br>
+
 ![Payment Processor System design](./assets/payment-processor-design.png)
 
 
