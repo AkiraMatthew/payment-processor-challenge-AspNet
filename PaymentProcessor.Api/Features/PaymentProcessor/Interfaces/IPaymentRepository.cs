@@ -7,6 +7,6 @@ namespace PaymentProcessor.Api.Features.PaymentProcessor.Interfaces;
 public interface IPaymentRepository
 {
     Task InsertPaymentAsync(Payment paymentEntity, CancellationToken cancellationToken = default);
-    Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTime? from, DateTime? to, CancellationToken cancellationToken = default);
+    Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken = default);
     Task<bool> ExistAsync(Guid correlationId, CancellationToken cancellationToken = default);
 }

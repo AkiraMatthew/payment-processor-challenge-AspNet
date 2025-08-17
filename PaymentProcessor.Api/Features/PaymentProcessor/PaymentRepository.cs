@@ -55,53 +55,68 @@ public class PaymentRepository : IPaymentRepository
         finally
         {
             await connection.CloseAsync();
+            await _dataSource.DisposeAsync();
         }
     }
 
-    public async Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTime? fromUtc, DateTime? toUtc, CancellationToken cancellationToken = default)
+    public async Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, CancellationToken cancellationToken = default)
     {
-        using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await connection.OpenAsync(cancellationToken);
 
-        var sqlSelect = (
-            @"
-            SELECT processor_type, 
-                COUNT(*) AS total_requests, 
-                COALESCE(SUM(amount),0) 
-                    AS total_amount
-            FROM payments
-            WHERE (@from IS NULL OR processed_at >= @from)
-              AND (@to IS NULL OR processed_at <= @to)
-            GROUP BY processor_type"
-        );
-
-        await using var cmd = _dataSource.CreateCommand(sqlSelect);
-        var result = cmd.Parameters.AddWithValue(sqlSelect, new
+        try
         {
-            From = fromUtc,
-            To = toUtc,
-        });
+            var sqlSelect = (
+                @"
+                SELECT gateway, 
+                    COUNT(*) AS TotalRequests, 
+                    COALESCE(SUM(amount),0) 
+                        AS TotalAmount
+                FROM payments
+                WHERE (@fromUtc IS NULL OR requested_at >= @from)
+                  AND (@toUtc IS NULL OR requested_at <= @to)
+                GROUP BY gateway;"
+            );
 
-        var summary = new PaymentsSummaryResponse();
+            PaymentSummaryDTO? defaultSummary = null;
+            PaymentSummaryDTO? fallbackSummary = null;
 
-        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            var type = reader.GetString(0);
-            var count = reader.GetInt32(1);
-            var amount = reader.GetDecimal(2);
+            await using var cmd = _dataSource.CreateCommand(sqlSelect);
 
-            if (type == PaymentGateway.Default.ToString())
+            cmd.Parameters.AddWithValue("fromUtc", fromUtc ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("toUtc", toUtc ?? (object)DBNull.Value);
+
+            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
             {
-                summary.Default.TotalRequests = count;
-                summary.Default.TotalAmount = amount;
+                var type = reader.GetString(0);
+                var count = reader.GetInt32(1);
+                var amount = reader.GetDecimal(2);
+
+                var dto = new PaymentSummaryDTO(
+                    Gateway: type,
+                    TotalRequests: count,
+                    TotalAmount: amount,
+                    TotalFee: 0, // Adjust if you have fee columns
+                    FeePerTransaction: 0 // Adjust if you have fee columns
+                );
+
+                if (type.Equals(PaymentGateway.Default.ToString(), StringComparison.OrdinalIgnoreCase))
+                    defaultSummary = dto;
+                else if (type.Equals(PaymentGateway.Fallback.ToString(), StringComparison.OrdinalIgnoreCase))
+                    fallbackSummary = dto;
             }
-            else if (type == PaymentGateway.Fallback.ToString())
-            {
-                summary.Fallback.TotalRequests = count;
-                summary.Fallback.TotalAmount = amount;
-            }
+
+            defaultSummary ??= new PaymentSummaryDTO(PaymentGateway.Default.ToString(), 0, 0, 0, 0);
+            fallbackSummary ??= new PaymentSummaryDTO(PaymentGateway.Fallback.ToString(), 0, 0, 0, 0);
+
+            return new PaymentsSummaryResponse(defaultSummary, fallbackSummary);
         }
-        return summary;
+        finally
+        {
+            await connection.CloseAsync();
+            await _dataSource.DisposeAsync();
+        }
     }
 
     public async Task<bool> ExistAsync(Guid correlationId, CancellationToken cancellationToken = default)

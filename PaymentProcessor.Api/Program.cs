@@ -12,7 +12,7 @@ var postgresConnectionString = builder.Configuration.GetConnectionString("Postgr
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
-builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
+//builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
 
 builder.Services.AddStackExchangeRedisCache(opts =>
 {

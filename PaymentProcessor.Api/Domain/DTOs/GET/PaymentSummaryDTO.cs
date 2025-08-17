@@ -5,13 +5,13 @@ public sealed record PaymentSummaryDTO(
     long TotalRequests, 
     decimal TotalAmount,
     decimal TotalFee,
-    decimal FeePerTransaction);
-//{
-//    public PaymentSummaryDTO() : this(
-//        string.Empty,
-//        default,
-//        default,
-//        default,
-//        default)
-//    { }
-//}
+    decimal FeePerTransaction)
+{
+    public PaymentSummaryDTO() : this(
+        string.Empty,
+        default,
+        default,
+        default,
+        default)
+    { }
+}

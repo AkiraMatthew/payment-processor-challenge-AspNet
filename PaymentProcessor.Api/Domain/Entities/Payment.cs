@@ -1,9 +1,11 @@
-﻿namespace PaymentProcessor.Api.Domain.Entities;
+﻿using PaymentProcessor.Api.Infrastructure.Enum;
+
+namespace PaymentProcessor.Api.Domain.Entities;
 
 public record Payment
     (
         Guid Correlation_Id,
         decimal Amount,
-        string? Processor_Type,
-        DateTime? Processed_At
+        PaymentGateway Gateway,
+        DateTime? RequestedAt
     );
