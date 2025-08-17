@@ -73,8 +73,8 @@ public class PaymentRepository : IPaymentRepository
                     COALESCE(SUM(amount),0) 
                         AS TotalAmount
                 FROM payments
-                WHERE (@fromUtc IS NULL OR requested_at >= @from)
-                  AND (@toUtc IS NULL OR requested_at <= @to)
+                WHERE (@fromUtc IS NULL OR requested_at >= @fromUtc)
+                  AND (@toUtc IS NULL OR requested_at <= @Utcto)
                 GROUP BY gateway;"
             );
 
@@ -107,8 +107,10 @@ public class PaymentRepository : IPaymentRepository
                     fallbackSummary = dto;
             }
 
-            defaultSummary ??= new PaymentSummaryDTO(PaymentGateway.Default.ToString(), 0, 0, 0, 0);
-            fallbackSummary ??= new PaymentSummaryDTO(PaymentGateway.Fallback.ToString(), 0, 0, 0, 0);
+            defaultSummary ??= new PaymentSummaryDTO(
+                PaymentGateway.Default.ToString(), 0, 0, 0, 0);
+            fallbackSummary ??= new PaymentSummaryDTO(
+                PaymentGateway.Fallback.ToString(), 0, 0, 0, 0);
 
             return new PaymentsSummaryResponse(defaultSummary, fallbackSummary);
         }
