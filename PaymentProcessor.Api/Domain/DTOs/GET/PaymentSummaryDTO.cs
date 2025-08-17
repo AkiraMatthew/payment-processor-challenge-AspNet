@@ -1,8 +1,17 @@
 ﻿namespace PaymentProcessor.Api.Domain.DTOs.GET;
 
-public record PaymentSummaryDTO(
+public sealed record PaymentSummaryDTO(
+    string? Gateway,
     long TotalRequests, 
     decimal TotalAmount,
     decimal TotalFee,
-    decimal FeePerTransaction
-);
+    decimal FeePerTransaction);
+//{
+//    public PaymentSummaryDTO() : this(
+//        string.Empty,
+//        default,
+//        default,
+//        default,
+//        default)
+//    { }
+//}
