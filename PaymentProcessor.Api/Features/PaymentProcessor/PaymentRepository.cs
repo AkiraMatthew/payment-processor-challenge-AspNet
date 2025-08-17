@@ -25,8 +25,10 @@ public class PaymentRepository : IPaymentRepository
         var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await connection.OpenAsync(cancellationToken);
 
-        const string sqlInsert = (
-            @"
+        try
+        {
+            const string sqlInsert = (
+                @"
                 INSERT INTO payments(
                     correlation_id, 
                     amount, 
@@ -36,12 +38,9 @@ public class PaymentRepository : IPaymentRepository
                     @correlationId, 
                     @amount, 
                     @processorType, 
-                    @processedAt)
-            "
-        );
-
-        try
-        {
+                    @processedAt);
+                "
+            );
             await using (NpgsqlCommand cmd = _dataSource.CreateCommand(sqlInsert))
             {
                 cmd.Parameters.AddWithValue("correlationId", paymentEntity.Correlation_Id);
@@ -75,7 +74,8 @@ public class PaymentRepository : IPaymentRepository
                 FROM payments
                 WHERE (@fromUtc IS NULL OR requested_at >= @fromUtc)
                   AND (@toUtc IS NULL OR requested_at <= @Utcto)
-                GROUP BY gateway;"
+                GROUP BY gateway;
+                "
             );
 
             PaymentSummaryDTO? defaultSummary = null;
