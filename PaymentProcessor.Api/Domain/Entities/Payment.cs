@@ -1,6 +1,6 @@
 ﻿namespace PaymentProcessor.Api.Domain.Entities;
 
-public record Payments
+public record Payment
     (
         Guid Correlation_Id,
         decimal Amount,

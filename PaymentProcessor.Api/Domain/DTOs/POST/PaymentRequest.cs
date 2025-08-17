@@ -2,5 +2,7 @@
 
 public record PaymentRequest(
     Guid CorrelationId,
-    decimal Amount 
+    decimal Amount,
+    DateTime? ProcessedAt,
+    string? ProcessorType
 );

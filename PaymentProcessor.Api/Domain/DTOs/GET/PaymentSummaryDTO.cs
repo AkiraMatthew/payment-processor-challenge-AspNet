@@ -1,4 +1,4 @@
-﻿namespace PaymentProcessor.Api.Domain.DTOs;
+﻿namespace PaymentProcessor.Api.Domain.DTOs.GET;
 
 public record PaymentSummaryDTO(
     long TotalRequests, 
