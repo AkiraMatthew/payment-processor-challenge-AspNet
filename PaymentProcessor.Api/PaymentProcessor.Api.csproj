@@ -25,10 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Interfaces\" />
-    <Folder Include="Features\PaymentProcessor\" />
     <Folder Include="Infrastructure\Contexts\" />
-    <Folder Include="Infrastructure\MessageBroker\" />
   </ItemGroup>
 
 </Project>

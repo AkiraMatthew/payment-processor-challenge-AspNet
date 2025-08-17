@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
+using PaymentProcessor.Api.Infrastructure.MessageBroker;
 using PaymentProcessor.Api.Infrastructure.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -11,6 +12,7 @@ var postgresConnectionString = builder.Configuration.GetConnectionString("Postgr
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
+builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
 
 builder.Services.AddStackExchangeRedisCache(opts =>
 {
