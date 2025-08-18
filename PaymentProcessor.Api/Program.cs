@@ -1,43 +1,41 @@
 using Microsoft.OpenApi.Models;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
-using PaymentProcessor.Api.Infrastructure.MessageBroker;
 using PaymentProcessor.Api.Infrastructure.Redis;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-var apiVersion = builder.Configuration.GetValue<string>("ApiVersion");
+var apiVersion = builder.Configuration.GetValue<string>("ApiVersion", "0.1");
+
 var postgresConnectionString = builder.Configuration.GetConnectionString("Postgres")
     ?? throw new InvalidOperationException("Database connection string is not configured.");
+var redisConnection = builder.Configuration.GetConnectionString("Redis")
+    ?? throw new InvalidOperationException("Connection Strings for Redis invalid or nullable.");
+
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
-builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
-//builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
 
-builder.Services.AddStackExchangeRedisCache(opts =>
-{
-    opts.Configuration = builder.Configuration.GetConnectionString("Redis");
-    opts.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
-    {
-        AbortOnConnectFail = true,
-        EndPoints = { opts.Configuration! }
-    };
-});
+var redis = ConnectionMultiplexer.Connect(redisConnection);
+builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+//builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
 
 builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["PaymentProcessor_Default"]!);
 });
 
-builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
+builder.Services.AddHttpClient(nameof(PaymentGateway.Fallback), httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["PaymentProcessor_Fallback"]!);
 });
 
 builder.Services.AddNpgsqlDataSource(postgresConnectionString);
 
-ThreadPool.SetMinThreads(32, 32);
+ThreadPool.SetMinThreads(64, 64);
 
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc(apiVersion, new OpenApiInfo
@@ -65,7 +63,6 @@ if (!await healthCheck.IsDatabaseReady())
 #endregion
 
 app.UseSwagger();
-app.UseSwaggerUI();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", "PaymentProcessor");
