@@ -2,10 +2,10 @@
 --DROP TABLE IF EXISTS payments;
 
 CREATE TABLE payments (
-    Correlation_Id UUID UNIQUE,
+    correlation_id UUID PRIMARY KEY,
     Amount DECIMAL(20, 2) NOT NULL,
-    Processor_Type VARCHAR(10), --NOT NULL CHECK (processor_type IN ('default', 'fallback')),
-    Processed_At TIMESTAMPTZ
+    requested_at TIMESTAMP NOT NULL CHECK (gateway IN ('default', 'fallback')),
+    gateway TEXT NOT NULL
 );
 
-CREATE INDEX idx_processor_processed ON payments (processor_type, processed_at);
+CREATE INDEX idx_payments_requested_at ON payments (gateway, requested_at);

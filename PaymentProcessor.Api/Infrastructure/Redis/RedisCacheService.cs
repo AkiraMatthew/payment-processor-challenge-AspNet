@@ -1,30 +1,34 @@
 ﻿
-using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 using System.Collections.Concurrent;
 
 namespace PaymentProcessor.Api.Infrastructure.Redis;
 
-public class RedisCacheService(IDistributedCache distributedCache) : IRedisCacheService
+public class RedisCacheService : IRedisCacheService
 {
+    private readonly IDatabase _db;
     private static readonly ConcurrentDictionary<string, bool> CacheKeys = new();
 
-    public async Task SetAsync<T>(string key, T value, CancellationToken cancellationToken) 
+    public RedisCacheService(IConnectionMultiplexer connectionMultiplexer)
+    {
+        _db = connectionMultiplexer.GetDatabase();
+    }
+
+    public async Task SetAsync<T>(string key, T value, TimeSpan expiration) 
         where T : class
     {
         string cacheValue = JsonConvert.SerializeObject(value);
 
-        await distributedCache.SetStringAsync(key, cacheValue, cancellationToken);
+        await _db.StringSetAsync(key, cacheValue, expiration);
 
         CacheKeys.TryAdd(key, false);
     }
 
-    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken) 
+    public async Task<T?> GetAsync<T>(string key) 
         where T : class
     {
-        string? cachedValue = await distributedCache.GetStringAsync(
-            key, 
-            cancellationToken);
+        string? cachedValue = await _db.StringGetAsync(key);
 
         if (cachedValue is null)
             return null;
@@ -32,38 +36,38 @@ public class RedisCacheService(IDistributedCache distributedCache) : IRedisCache
         return JsonConvert.DeserializeObject<T>(cachedValue);
     }
 
-    public async Task<T?> GetAsync<T>(string key, Func<Task<T>> factory, CancellationToken cancellationToken = default) where T : class
+    public async Task<T?> GetAsync<T>(string key, Func<Task<T>> factory) where T : class
     {
-        T? cachedValue = await GetAsync<T>(key, cancellationToken);
+        T? cachedValue = await GetAsync<T>(key);
 
         if(cachedValue is not null)
             return cachedValue;
 
         cachedValue = await factory();
 
-        await SetAsync(key, cachedValue, cancellationToken);
+        await SetAsync(key, cachedValue, TimeSpan.FromSeconds(5));
 
         return cachedValue;
     }
 
-    public async Task RemoveAsync(string key, CancellationToken cancellationToken)
+    public async Task RemoveAsync(string key)
     {
-        await distributedCache.RemoveAsync(key, cancellationToken);
+        await _db.KeyDeleteAsync(key);
 
         CacheKeys.TryRemove(key, out bool _);
     }
 
-    public async Task RemoveByPrefixAsync(string prefixKey, CancellationToken cancellationToken)
+    public async Task RemoveByPrefixAsync(string prefixKey)
     {
         //foreach (var key in CacheKeys.Keys)
         //{
-        //    await RemoveAsync(key, cancellationToken);
+        //    await RemoveAsync(key);
         //}
 
         IEnumerable<Task> task = CacheKeys
             .Keys
             .Where(k => k.StartsWith(prefixKey))
-            .Select(k => RemoveAsync(k, cancellationToken));
+            .Select(k => RemoveAsync(k));
 
         await Task.WhenAll(task);
     }

@@ -8,9 +8,9 @@ public class DatabaseHealthCheck(IConfiguration config)
 
     public async Task<bool> IsDatabaseReady()
     {
+        await using var connection = new NpgsqlConnection(_connectionString);
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             await using var cmd = new NpgsqlCommand("SELECT 1", connection);
             return (await cmd.ExecuteScalarAsync())?.Equals(1) ?? false;
@@ -18,6 +18,10 @@ public class DatabaseHealthCheck(IConfiguration config)
         catch
         {
             return false;
+        }
+        finally
+        {
+            await connection.CloseAsync();
         }
     }
 }
