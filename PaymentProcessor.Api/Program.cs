@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
 using PaymentProcessor.Api.Features.PaymentProcessor;
+using PaymentProcessor.Api.Features.Redis;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
-using PaymentProcessor.Api.Infrastructure.Redis;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);

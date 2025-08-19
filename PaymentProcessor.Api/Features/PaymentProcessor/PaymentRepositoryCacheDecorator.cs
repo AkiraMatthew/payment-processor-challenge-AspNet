@@ -1,7 +1,7 @@
 ﻿using PaymentProcessor.Api.Domain.DTOs.GET;
 using PaymentProcessor.Api.Domain.Entities;
 using PaymentProcessor.Api.Features.PaymentProcessor.Interfaces;
-using PaymentProcessor.Api.Infrastructure.Redis;
+using PaymentProcessor.Api.Features.Redis;
 
 namespace PaymentProcessor.Api.Features.PaymentProcessor;
 
