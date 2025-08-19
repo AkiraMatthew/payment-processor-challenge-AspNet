@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
+using PaymentProcessor.Api.Features.PaymentProcessor;
+using PaymentProcessor.Api.Features.Redis;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
-using PaymentProcessor.Api.Infrastructure.Redis;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -12,7 +14,6 @@ var postgresConnectionString = builder.Configuration.GetConnectionString("Postgr
     ?? throw new InvalidOperationException("Database connection string is not configured.");
 var redisConnection = builder.Configuration.GetConnectionString("Redis")
     ?? throw new InvalidOperationException("Connection Strings for Redis invalid or nullable.");
-
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
 
@@ -54,23 +55,18 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-#region Database HealthCheck
-var healthCheck = app.Services.GetRequiredService<DatabaseHealthCheck>();
-if (!await healthCheck.IsDatabaseReady())
-{
+if (!await app.Services.GetRequiredService<DatabaseHealthCheck>().IsDatabaseReady())
     throw new Exception("PostgreSQL connection failed!");
-}
-#endregion
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", "PaymentProcessor");
-    options.DocumentTitle = "PassAuthKeeper API Documentation";
+    options.SwaggerEndpoint($"/swagger/swagger.json", "PaymentProcessor");
     options.RoutePrefix = string.Empty;
 });
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.MapPaymentsApi();
 await app.RunAsync();

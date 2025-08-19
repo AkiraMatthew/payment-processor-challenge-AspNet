@@ -3,36 +3,33 @@ using System.Text;
 
 namespace PaymentProcessor.Api.Infrastructure.MessageBroker;
 
-public class Transaction_Producer : IRabbitMQConnection, IDisposable
+public class Transaction_Producer : IRabbitMQConnection
 {
     private readonly string _connectionString;
     private readonly IConnection _connection;
+    private readonly IDisposable _disposable;
     public IConnection Connection => _connection;
+    public IDisposable Disposable => _disposable;
 
     public Transaction_Producer(string connectionString)
     {
         _connectionString = connectionString;
-        InitializeConnection();
     }
 
-    private async Task InitializeConnection()
+    private async Task<IConnection> InitializeConnection()
     {
         ConnectionFactory factory = new()
         {
             HostName = "localhost",
             Uri = new Uri(_connectionString)
         };
-        await factory.CreateConnectionAsync();
+
+        return await factory.CreateConnectionAsync();
     }
 
     public async Task Producer()
     {
-        ConnectionFactory factory = new()
-        {
-            HostName = "localhost",
-            Uri = new Uri(_connectionString)
-        };
-        using var connection = await factory.CreateConnectionAsync();
+        using var connection = await InitializeConnection();
         using var channel = await connection.CreateChannelAsync();
 
         await channel.ExchangeDeclareAsync(
@@ -51,6 +48,4 @@ public class Transaction_Producer : IRabbitMQConnection, IDisposable
         Console.WriteLine(" Press [enter] to exit.");
         Console.ReadLine();
     }
-
-    public void Dispose() => _connection?.Dispose();
 }

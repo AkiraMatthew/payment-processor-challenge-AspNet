@@ -1,5 +1,4 @@
-﻿using Npgsql;
-using PaymentProcessor.Api.Domain.DTOs.GET;
+﻿using PaymentProcessor.Api.Domain.DTOs.GET;
 using PaymentProcessor.Api.Domain.Entities;
 using PaymentProcessor.Api.Features.PaymentProcessor.Interfaces;
 using PaymentProcessor.Api.Infrastructure.Enum;
@@ -8,17 +7,10 @@ namespace PaymentProcessor.Api.Features.PaymentProcessor;
 
 public class PaymentRepository : IPaymentRepository
 {
-    //private readonly IConfiguration _configuration;
-    //private readonly string _connectionString;
     private readonly NpgsqlDataSource _dataSource;
 
-    public PaymentRepository(IConfiguration configuration, 
-        NpgsqlDataSource dataSource)
-    {
-        //_configuration = configuration;
-        //_connectionString = _configuration.GetConnectionString("Postgres")!;
-        _dataSource = dataSource;
-    }
+    public PaymentRepository(NpgsqlDataSource dataSource)
+        => _dataSource = dataSource;
 
     public async Task InsertPaymentAsync(Payment paymentEntity, CancellationToken cancellationToken = default)
     {
@@ -41,15 +33,14 @@ public class PaymentRepository : IPaymentRepository
                     @processedAt);
                 "
             );
-            await using (NpgsqlCommand cmd = _dataSource.CreateCommand(sqlInsert))
-            {
-                cmd.Parameters.AddWithValue("correlationId", paymentEntity.Correlation_Id);
-                cmd.Parameters.AddWithValue("amount", paymentEntity.Correlation_Id);
-                cmd.Parameters.AddWithValue("processorType", paymentEntity.Correlation_Id);
-                cmd.Parameters.AddWithValue("processedAt", paymentEntity.Correlation_Id);
+            await using NpgsqlCommand cmd = _dataSource.CreateCommand(sqlInsert);
 
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
-            }
+            cmd.Parameters.AddWithValue("correlationId", paymentEntity.Correlation_Id);
+            cmd.Parameters.AddWithValue("amount", paymentEntity.Correlation_Id);
+            cmd.Parameters.AddWithValue("processorType", paymentEntity.Correlation_Id);
+            cmd.Parameters.AddWithValue("processedAt", paymentEntity.Correlation_Id);
+
+            await cmd.ExecuteNonQueryAsync(cancellationToken);
         }
         finally
         {

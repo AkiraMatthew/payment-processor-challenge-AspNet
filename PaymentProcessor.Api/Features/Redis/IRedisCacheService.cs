@@ -1,4 +1,4 @@
-﻿namespace PaymentProcessor.Api.Infrastructure.Redis;
+﻿namespace PaymentProcessor.Api.Features.Redis;
 
 public interface IRedisCacheService
 {

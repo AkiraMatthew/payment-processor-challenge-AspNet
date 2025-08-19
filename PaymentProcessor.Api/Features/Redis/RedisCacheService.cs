@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Collections.Concurrent;
 
-namespace PaymentProcessor.Api.Infrastructure.Redis;
+namespace PaymentProcessor.Api.Features.Redis;
 
 public class RedisCacheService : IRedisCacheService
 {
