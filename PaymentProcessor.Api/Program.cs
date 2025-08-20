@@ -4,7 +4,6 @@ using PaymentProcessor.Api.Features.PaymentProcessor;
 using PaymentProcessor.Api.Features.Redis;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -14,6 +13,10 @@ var postgresConnectionString = builder.Configuration.GetConnectionString("Postgr
     ?? throw new InvalidOperationException("Database connection string is not configured.");
 var redisConnection = builder.Configuration.GetConnectionString("Redis")
     ?? throw new InvalidOperationException("Connection Strings for Redis invalid or nullable.");
+
+builder.WebHost.UseKestrelHttpsConfiguration();
+builder.Services.Configure<RouteOptions>(options =>
+    options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 
 builder.Services.AddSingleton<DatabaseHealthCheck>();
 
@@ -61,7 +64,8 @@ if (!await app.Services.GetRequiredService<DatabaseHealthCheck>().IsDatabaseRead
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/swagger/swagger.json", "PaymentProcessor");
+    options.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", "PaymentProcessor");
+    options.DocumentTitle = "PaymentProcessor API Documentation";
     options.RoutePrefix = string.Empty;
 });
 
