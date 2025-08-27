@@ -24,21 +24,21 @@ public class PaymentRepository : IPaymentRepository
                 INSERT INTO payments(
                     correlation_id, 
                     amount, 
-                    processor_type,
-                    processed_at)
+                    gateway,
+                    requested_at)
                 VALUE (
                     @correlationId, 
                     @amount, 
-                    @processorType, 
-                    @processedAt);
+                    @gateway, 
+                    @requestedAt);
                 "
             );
             await using NpgsqlCommand cmd = _dataSource.CreateCommand(sqlInsert);
 
-            cmd.Parameters.AddWithValue("correlationId", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("amount", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("processorType", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("processedAt", paymentEntity.Correlation_Id);
+            cmd.Parameters.AddWithValue("correlationId", paymentEntity.CorrelationId);
+            cmd.Parameters.AddWithValue("amount", paymentEntity.Amount);
+            cmd.Parameters.AddWithValue("gateway", paymentEntity.Gateway);
+            cmd.Parameters.AddWithValue("requestedAt", paymentEntity.RequestedAt);
 
             await cmd.ExecuteNonQueryAsync(cancellationToken);
         }
