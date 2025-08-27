@@ -72,5 +72,7 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.MapPaymentsApi();
+app.MapPayments();
+app.MapSummaries();
+
 await app.RunAsync();
