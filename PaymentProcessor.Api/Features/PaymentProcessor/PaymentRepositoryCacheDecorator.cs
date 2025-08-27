@@ -23,13 +23,13 @@ public class PaymentRepositoryCacheDecorator : IPaymentRepository
         await _redisCache.RemoveAsync("payments:summary");
     }
 
-    public async Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, CancellationToken cancellationToken = default)
+    public async Task<SummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, CancellationToken cancellationToken = default)
     {
         // Only cache when no filters are applied (optional, adjust as needed)
         if (fromUtc is not null && toUtc is not null)
             return await _inner.GetPaymentsSummaryAsync(fromUtc, toUtc, cancellationToken);
 
-        var cached = await _redisCache.GetAsync<PaymentsSummaryResponse>("payments:summary");
+        var cached = await _redisCache.GetAsync<SummaryResponse>("payments:summary");
         if (cached is not null)
             return cached;
 

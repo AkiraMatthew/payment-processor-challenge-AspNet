@@ -24,21 +24,21 @@ public class PaymentRepository : IPaymentRepository
                 INSERT INTO payments(
                     correlation_id, 
                     amount, 
-                    processor_type,
-                    processed_at)
+                    gateway,
+                    requested_at)
                 VALUE (
                     @correlationId, 
                     @amount, 
-                    @processorType, 
-                    @processedAt);
+                    @gateway, 
+                    @requestedAt);
                 "
             );
             await using NpgsqlCommand cmd = _dataSource.CreateCommand(sqlInsert);
 
-            cmd.Parameters.AddWithValue("correlationId", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("amount", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("processorType", paymentEntity.Correlation_Id);
-            cmd.Parameters.AddWithValue("processedAt", paymentEntity.Correlation_Id);
+            cmd.Parameters.AddWithValue("correlationId", paymentEntity.CorrelationId);
+            cmd.Parameters.AddWithValue("amount", paymentEntity.Amount);
+            cmd.Parameters.AddWithValue("gateway", paymentEntity.Gateway);
+            cmd.Parameters.AddWithValue("requestedAt", paymentEntity.RequestedAt);
 
             await cmd.ExecuteNonQueryAsync(cancellationToken);
         }
@@ -49,7 +49,7 @@ public class PaymentRepository : IPaymentRepository
         }
     }
 
-    public async Task<PaymentsSummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, CancellationToken cancellationToken = default)
+    public async Task<SummaryResponse> GetPaymentsSummaryAsync(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await connection.OpenAsync(cancellationToken);
@@ -69,8 +69,8 @@ public class PaymentRepository : IPaymentRepository
                 "
             );
 
-            PaymentSummaryDTO? defaultSummary = null;
-            PaymentSummaryDTO? fallbackSummary = null;
+            SummaryDTO? defaultSummary = null;
+            SummaryDTO? fallbackSummary = null;
 
             await using var cmd = _dataSource.CreateCommand(sqlSelect);
 
@@ -84,26 +84,31 @@ public class PaymentRepository : IPaymentRepository
                 var count = reader.GetInt32(1);
                 var amount = reader.GetDecimal(2);
 
-                var dto = new PaymentSummaryDTO(
+                var dto = new SummaryDTO(
                     Gateway: type,
                     TotalRequests: count,
-                    TotalAmount: amount,
-                    TotalFee: 0, // Adjust if you have fee columns
-                    FeePerTransaction: 0 // Adjust if you have fee columns
+                    TotalAmount: amount
                 );
 
-                if (type.Equals(PaymentGateway.Default.ToString(), StringComparison.OrdinalIgnoreCase))
-                    defaultSummary = dto;
-                else if (type.Equals(PaymentGateway.Fallback.ToString(), StringComparison.OrdinalIgnoreCase))
-                    fallbackSummary = dto;
+                switch (type)
+                {
+                    case var t when t.Equals(PaymentGateway.Default.ToString(), StringComparison.OrdinalIgnoreCase):
+                        defaultSummary = dto;
+                        break;
+                    case var t when t.Equals(PaymentGateway.Fallback.ToString(), StringComparison.OrdinalIgnoreCase):
+                        fallbackSummary = dto;
+                        break;
+                }
             }
 
-            defaultSummary ??= new PaymentSummaryDTO(
-                PaymentGateway.Default.ToString(), 0, 0, 0, 0);
-            fallbackSummary ??= new PaymentSummaryDTO(
-                PaymentGateway.Fallback.ToString(), 0, 0, 0, 0);
+            defaultSummary ??= new SummaryDTO(
+                PaymentGateway.Default.ToString(), 0, 0);
+            fallbackSummary ??= new SummaryDTO(
+                PaymentGateway.Fallback.ToString(), 0, 0);
 
-            return new PaymentsSummaryResponse(defaultSummary, fallbackSummary);
+            return new SummaryResponse(
+                new SummaryItem(defaultSummary.TotalRequests, defaultSummary.TotalAmount),
+                new SummaryItem(fallbackSummary.TotalRequests, fallbackSummary.TotalAmount));
         }
         finally
         {

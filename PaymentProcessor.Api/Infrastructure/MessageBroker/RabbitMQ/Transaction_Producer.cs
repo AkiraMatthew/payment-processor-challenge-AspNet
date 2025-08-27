@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
 
-namespace PaymentProcessor.Api.Infrastructure.MessageBroker;
+namespace PaymentProcessor.Api.Infrastructure.MessageBroker.RabbitMQ;
 
 public class Transaction_Producer : IRabbitMQConnection
 {
@@ -33,16 +33,31 @@ public class Transaction_Producer : IRabbitMQConnection
         using var channel = await connection.CreateChannelAsync();
 
         await channel.ExchangeDeclareAsync(
-            exchange: "transaction",
+            exchange: "transactions",
             durable: true,
             type: ExchangeType.Fanout,
             autoDelete: false,
             arguments: null);
 
+        await channel.QueueDeclareAsync(
+            queue: "default",
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
+
+        await channel.QueueBindAsync(
+            "transactions", 
+            "default", 
+            string.Empty);
+
         const string message = "Hello World!";
         var body = Encoding.UTF8.GetBytes(message);
 
-        await channel.BasicPublishAsync(exchange: string.Empty, routingKey: "hello", body: body);
+        await channel.BasicPublishAsync(
+            exchange: "transactions", 
+            routingKey: string.Empty, 
+            body: body);
         Console.WriteLine($" [x] Sent {message}");
 
         Console.WriteLine(" Press [enter] to exit.");
