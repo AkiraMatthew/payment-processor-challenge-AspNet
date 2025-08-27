@@ -107,7 +107,7 @@ public class PaymentRepository : IPaymentRepository
                 PaymentGateway.Fallback.ToString(), 0, 0);
 
             return new SummaryResponse(
-                new SummaryItem(defaultSummary.TotalRequests, defaultSummary.TotalAmount)
+                new SummaryItem(defaultSummary.TotalRequests, defaultSummary.TotalAmount),
                 new SummaryItem(fallbackSummary.TotalRequests, fallbackSummary.TotalAmount));
         }
         finally
