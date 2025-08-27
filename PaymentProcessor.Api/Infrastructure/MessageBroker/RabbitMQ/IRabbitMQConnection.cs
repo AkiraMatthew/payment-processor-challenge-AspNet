@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace PaymentProcessor.Api.Infrastructure.MessageBroker;
+namespace PaymentProcessor.Api.Infrastructure.MessageBroker.RabbitMQ;
 
 public interface IRabbitMQConnection
 {

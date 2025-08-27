@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
 
-namespace PaymentProcessor.Api.Infrastructure.MessageBroker;
+namespace PaymentProcessor.Api.Infrastructure.MessageBroker.RabbitMQ;
 
 public class Transaction_Producer : IRabbitMQConnection
 {
