@@ -1,6 +1,6 @@
 ﻿namespace PaymentProcessor.Api.Infrastructure.Config;
 
-public class SocketConfiguration
+public class HttpClientConfig
 {
     public const int MaxDegreeOfParallels = 20;
 
