@@ -1,9 +1,15 @@
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using PaymentProcessor.Api.Domain.DTOs.POST;
 using PaymentProcessor.Api.Features.PaymentProcessor;
 using PaymentProcessor.Api.Features.Redis;
 using PaymentProcessor.Api.Infrastructure.Database;
 using PaymentProcessor.Api.Infrastructure.Enum;
+using PaymentProcessor.Api.Infrastructure.MessageBroker;
+using RedLockNet;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -23,7 +29,11 @@ builder.Services.AddSingleton<DatabaseHealthCheck>();
 var redis = ConnectionMultiplexer.Connect(redisConnection);
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
-//builder.Services.AddSingleton<IRabbitMQConnection>(new IRabbitMQConnection());
+builder.Services.AddSingleton<IDistributedLockFactory>(_ =>
+{
+    var multiplexers = new List<RedLockMultiplexer> { redis };
+    return RedLockFactory.Create(multiplexers);
+});
 
 builder.Services.AddHttpClient(nameof(PaymentGateway.Default), httpClient =>
 {
@@ -34,6 +44,8 @@ builder.Services.AddHttpClient(nameof(PaymentGateway.Fallback), httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["PaymentProcessor_Fallback"]!);
 });
+
+builder.Services.AddSingleton<MessageQueue<PaymentRequest>>();
 
 builder.Services.AddNpgsqlDataSource(postgresConnectionString);
 
